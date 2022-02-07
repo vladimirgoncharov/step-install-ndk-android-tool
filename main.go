@@ -177,5 +177,5 @@ func main() {
 
 	// All done
 	fmt.Println()
-	log.Donef("Required SDK components are installed")
+	log.Donef("Required NDK component is installed")
 }
