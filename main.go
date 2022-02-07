@@ -21,7 +21,6 @@ const androidNDKHome = "ANDROID_NDK_HOME"
 
 // Config ...
 type Config struct {
-	GradlewPath    string `env:"gradlew_path,file"`
 	AndroidHome    string `env:"ANDROID_HOME"`
 	AndroidSDKRoot string `env:"ANDROID_SDK_ROOT"`
 	NDKVersion     string `env:"ndk_version"`
@@ -133,15 +132,6 @@ func main() {
 	fmt.Println()
 	stepconf.Print(config)
 
-	fmt.Println()
-	log.Infof("Preparation")
-
-	// Set executable permission for gradlew
-	log.Printf("Set executable permission for gradlew")
-	if err := os.Chmod(config.GradlewPath, 0770); err != nil {
-		failf("Failed to set executable permission for gradlew, error: %s", err)
-	}
-
 	// Initialize Android SDK
 	fmt.Println()
 	log.Infof("Initialize Android SDK")
@@ -159,7 +149,7 @@ func main() {
 
 		_, err := version.NewVersion(config.NDKVersion)
 		if err != nil {
-			failf(fmt.Sprintf("'%s' is not a valid NDK version. This should be the full version number, such as 23.0.7599858. To see all available versions, run 'sdkmanager --list'", config.NDKVersion))
+			failf(fmt.Sprintf("'%s' is not a valid NDK version. This should be the full version number, such as 23.1.7779620. To see all available versions, run 'sdkmanager --list'", config.NDKVersion))
 		}
 
 		if err := updateNDK(config.NDKVersion, androidSdk); err != nil {
@@ -185,14 +175,7 @@ func main() {
 		failf("Failed to ensure android licences, error: %s", err)
 	}
 
-	// Ensure required Android SDK components
-	fmt.Println()
-	log.Infof("Ensure required Android SDK components")
-
-	if err := androidcomponents.Ensure(androidSdk, config.GradlewPath); err != nil {
-		failf("Failed to ensure android components, error: %s", err)
-	}
-
+	// All done
 	fmt.Println()
 	log.Donef("Required SDK components are installed")
 }
